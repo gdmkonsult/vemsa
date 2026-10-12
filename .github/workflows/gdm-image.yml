@@ -1,10 +1,12 @@
 name: GDM image
 
-# Nightly: upstream eneo-ai/vemsa main + our gdm commits -> tests -> ghcr.io/gdmkonsult/vemsa:gdm.
+# Weekly: upstream eneo-ai/vemsa main + our gdm commits -> tests -> ghcr.io/gdmkonsult/vemsa:gdm-candidate.
+# The cluster canary-tests the candidate on B300 Monday night and promotes it by digest
+# (gdm-rke2-ai-services-apps manifests/vemsa/weekly-update.yaml).
 # The rebase is local only: GITHUB_TOKEN may not push upstream's workflow-file changes.
 on:
   schedule:
-    - cron: "30 0 * * *"
+    - cron: "0 20 * * 0"
   push:
     branches: [gdm]
   workflow_dispatch:
@@ -87,7 +89,7 @@ jobs:
             TORCH_VARIANT=gpu
             ML_EXTRAS=diarize align local
           tags: |
-            ghcr.io/${{ github.repository }}:gdm
+            ghcr.io/${{ github.repository }}:gdm-candidate
             ghcr.io/${{ github.repository }}:gdm-${{ steps.rebase.outputs.upstream }}-${{ steps.rebase.outputs.head }}
           labels: |
             org.opencontainers.image.source=https://github.com/${{ github.repository }}
